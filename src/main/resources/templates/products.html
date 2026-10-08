@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f5f7fa;
+        }
+
+        form {
+            display: grid;
+            gap: 12px;
+            max-width: 400px;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: grid;
+            gap: 5px;
+        }
+
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Inventory Management</h1>
+
+<h2>Add Product</h2>
+
+<form th:action="@{/products}" th:object="${product}" method="post">
+    <label>
+        Product Name
+        <input type="text" th:field="*{name}" required>
+    </label>
+
+    <label>
+        Category
+        <input type="text" th:field="*{category}" required>
+    </label>
+
+    <label>
+        Price
+        <input type="number" th:field="*{price}"
+               min="0" step="0.01" required>
+    </label>
+
+    <label>
+        Quantity
+        <input type="number" th:field="*{quantity}"
+               min="0" step="1" required>
+    </label>
+
+    <button type="submit">Add Product</button>
+</form>
+
+<h2>Product List</h2>
+<form th:action="@{/}" method="get">
+    <label>
+        Search by product name
+        <input type="search"
+               name="keyword"
+               th:value="${keyword}"
+               placeholder="Enter product name">
+    </label>
+
+    <button type="submit">Search</button>
+    <a th:href="@{/}">Show All Products</a>
+</form>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:if="${#lists.isEmpty(products)}">
+        <td colspan="6">No products found.</td>
+    </tr>
+
+    <tr th:each="item : ${products}">
+        <td th:text="${item.id}"></td>
+        <td th:text="${item.name}"></td>
+        <td th:text="${item.category}"></td>
+        <td th:text="${item.price}"></td>
+        <td th:text="${item.quantity}"></td>
+
+        <td>
+            <a th:href="@{/products/{id}/edit(id=${item.id})}">Edit</a>
+            <form th:action="@{/products/{id}/delete(id=${item.id})}"
+                  method="post"
+                  style="display: inline; margin: 0;"
+                  onsubmit="return confirm('Delete this product?');">
+                <button type="submit" style="background: #dc2626;">
+                    Delete
+                </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
